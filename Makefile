@@ -36,13 +36,26 @@ run-tests:
 	@echo "Running tests..."
 	nosetests --with-coverage -d --cover-package=${PACKAGE_COVERAGE} --cover-erase
 
-publish:
+publish: clean build
 	@echo "Publishing new version on Pypi..."
-	python setup.py sdist upload
+	twine upload dist/*
 
 clean:
 	@echo "Cleaning compiled files..."
 	find . | grep -E "(__pycache__|\.pyc|\.pyo)$ " | xargs rm -rf
+	@echo "Cleaning distribution files..."
+	rm -rf dist
+	@echo "Cleaning build files..."
+	rm -rf build
+	@echo "Cleaning egg info files..."
+	rm -rf ${PACKAGE_NAME}.egg-info
+	@echo "Cleaning coverage files..."
+	rm -f .coverage
+
+build-python:
+	python3 setup.py bdist_wheel
+
+build: build-python
 
 flake:
 	@echo "Running flake8 tests..."
